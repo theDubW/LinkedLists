@@ -39,7 +39,7 @@ int main()
     char cNum[10] ;
     // Replace array with Linked List
     int   airportCount;
-    Airport* airportArr[13500];
+  //  Airport* airportArr[13500];
 
     infile.open ("./USAirportCodes.csv", ifstream::in);
     if (infile.is_open())
@@ -47,23 +47,13 @@ int main()
         int   c=0;
         while (infile.good())
         {
-            airportArr[c] = new Airport();
-            infile.getline(airportArr[c]->code, 256, ',');
+            Airport * c = new Airport();
+            infile.getline(c->code, 256, ',');
             infile.getline(cNum, 256, ',');
-            airportArr[c]->longitude = atof(cNum);
+            c->longitude = atof(cNum);
             infile.getline(cNum, 256, '\n');
-            airportArr[c]->latitude = atof(cNum);
-            link->add(airportArr[c]);
-
-
-          /*  if (!(c % 1000))
-            {
-                cout << airportArr[c]->code << " long: " << airportArr[c]->longitude << " lat: " << airportArr[c]->latitude <<  endl;
-                cout << airportArr[c+1]->code << endl; //" long: " << airportArr[c+1]->longitude << " lat: " << airportArr[c+1]->latitude <<  endl;
-            }*/
-
-
-
+            c->latitude = atof(cNum);
+            link->add(c);
             i++ ;
             c++;
         }
@@ -74,11 +64,13 @@ int main()
       int j = 13428;
       cout<<"Farthest Airport: "<<link->get(j)->toString()<<", Distance: "<< 0.621371*distanceEarth(30.1944, 97.67, ((link->get(j))->air)->longitude, ((link->get(j))->air)->latitude  )<<endl;
       printf("% 10s\n", "Airports Within 100 Miles: ");
+      int g = 1;
       for(i = 0; i<=link->size();i++){
           //cout<<"WTF";
           double distanceInMiles = 0.621371*distanceEarth(30.1944, 97.67, ((link->get(i))->air)->longitude, ((link->get(i))->air)->latitude);
           if(distanceInMiles>100.0) break;
-          cout<<link->get(i)->toString()<<", Distance in Miles: "<<distanceInMiles<<endl;
+          cout<<g<<". "<<link->get(i)->toString()<<", Distance in Miles: "<<distanceInMiles<<endl;
+          g++;
         }
 
 

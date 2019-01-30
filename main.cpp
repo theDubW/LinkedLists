@@ -50,9 +50,9 @@ int main()
             Airport * c = new Airport();
             infile.getline(c->code, 256, ',');
             infile.getline(cNum, 256, ',');
-            c->longitude = atof(cNum);
-            infile.getline(cNum, 256, '\n');
             c->latitude = atof(cNum);
+            infile.getline(cNum, 256, '\n');
+            c->longitude = atof(cNum);
             link->add(c);
             i++ ;
             c++;
@@ -62,17 +62,16 @@ int main()
       mergeSort(&(link->head));
       cout<<link->size()<<endl;
       int j = 13428;
-      cout<<"Farthest Airport: "<<link->get(j)->toString()<<", Distance: "<< 0.621371*distanceEarth(30.1944, 97.67, ((link->get(j))->air)->longitude, ((link->get(j))->air)->latitude  )<<endl;
+      cout<<"Farthest Airport: "<<(link->get(j))->toString()<<", Distance: "<< 0.621371*distanceEarth(30.1944, 97.67, ((link->get(j))->air)->longitude, ((link->get(j))->air)->latitude  )<<endl;
       printf("% 10s\n", "Airports Within 100 Miles: ");
-      int g = 1;
-      for(i = 0; i<=link->size();i++){
+      for(i = 0; i<link->size();i++){
           //cout<<"WTF";
-          double distanceInMiles = 0.621371*distanceEarth(30.1944, 97.67, ((link->get(i))->air)->longitude, ((link->get(i))->air)->latitude);
-          if(distanceInMiles>100.0) break;
-          cout<<g<<". "<<link->get(i)->toString()<<", Distance in Miles: "<<distanceInMiles<<endl;
-          g++;
+          double longitudeA = ((link->get(i))->air)->longitude;
+          double latitudeA = ((link->get(i))->air)->latitude;
+          double distanceInMiles = distanceEarth(30.1944, 97.6700, latitudeA, longitudeA)/1.61;
+          if(distanceInMiles<=100.0)
+            cout<<i+1<<". "<<(link->get(i))->toString()<<", Distance in Miles: "<<distanceInMiles<<endl;
         }
-
 
     }
     else
@@ -115,8 +114,6 @@ double distanceEarth(double lat1d, double lon1d, double lat2d, double lon2d) {
   v = sin((lon2r - lon1r)/2);
   return 2.0 * earthRadiusKm * asin(sqrt(u * u + cos(lat1r) * cos(lat2r) * v * v));
 }
-
-
 /*
 	Provide sort routine on linked list
 */
@@ -140,10 +137,13 @@ Node * sortedMerge(Node * a, Node *b){
   Node * result = NULL;
   if(a==NULL) return(b);
   else if(b==NULL) return(a);
-  double distanceA = distanceEarth(30.197, 97.66, (a->air)->longitude, (a->air)->latitude);
-  double distanceB = distanceEarth(30.197, 97.66, (b->air)->longitude, (b->air)->latitude);
+double longitudeA = (a->air)->longitude;
+double latitudeA = (a->air)->latitude;
+double longitudeB = (b->air)->longitude;
+double latitudeB = (b->air)->latitude;
+double distanceA = distanceEarth(30.1944, 97.6700, latitudeA, longitudeA)/1.61;
+double distanceB = distanceEarth(30.1944, 97.6700, latitudeB, longitudeB)/1.61;
   if(distanceA<=distanceB){
-  //  cout<<"AM SORTING>>>   ";
     result = a;
     result->next = sortedMerge(a->next, b);
   }else{

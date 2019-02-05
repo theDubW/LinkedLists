@@ -26,11 +26,31 @@ using namespace std;
 
 
 
+class Airport
+{
+public:
+    char    code[5];
+    double   longitude;
+    double   latitude;
+    string toString(){
+      string output = "";
+      output = string("Code: ")+string((this)->code)+string(", Longitude: ")+to_string((this)->longitude)+string(", Latitude: ")+to_string((this)->latitude);
+      return output;
+    }
+    bool equals(Airport * air){
+      if(air->code!=this->code)
+        return false;
+      if(air->longitude!=this->longitude)
+        return false;
+      if(air->latitude!=this->latitude)
+        return false;
+      return true;
+    }
 
-void simpleSortTotal(LinkedList* s, int c);
-void mergeSort(Node ** headRef);
+};
+void mergeSort(Node<Airport> ** headRef);
 double distanceEarth(double lat1d, double lon1d, double lat2d, double lon2d);
-LinkedList * link = new LinkedList();
+LinkedList<Airport> * link = new LinkedList<Airport>();
 
 int main()
 {
@@ -60,17 +80,18 @@ int main()
         airportCount = c-1;
         infile.close();
       mergeSort(&(link->head));
-      cout<<link->size()<<endl;
       int j = 13428;
-      cout<<"Farthest Airport: "<<(link->get(j))->toString()<<", Distance: "<< 0.621371*distanceEarth(30.1944, 97.67, ((link->get(j))->air)->longitude, ((link->get(j))->air)->latitude  )<<endl;
+      cout<<"Farthest Airport: "<<(link->get(j))->toString()<<", Distance: "<< 0.621371*distanceEarth(30.1944, 97.67, (link->get(j))->longitude, (link->get(j))->latitude)<<endl;
       printf("% 10s\n", "Airports Within 100 Miles: ");
       for(i = 0; i<link->size();i++){
           //cout<<"WTF";
-          double longitudeA = ((link->get(i))->air)->longitude;
-          double latitudeA = ((link->get(i))->air)->latitude;
+          double longitudeA = (link->get(i))->longitude;
+          double latitudeA = (link->get(i))->latitude;
           double distanceInMiles = distanceEarth(30.1944, 97.6700, latitudeA, longitudeA)/1.61;
           if(distanceInMiles<=100.0)
             cout<<i+1<<". "<<(link->get(i))->toString()<<", Distance in Miles: "<<distanceInMiles<<endl;
+          else
+            break;
         }
 
     }
@@ -117,9 +138,9 @@ double distanceEarth(double lat1d, double lon1d, double lat2d, double lon2d) {
 /*
 	Provide sort routine on linked list
 */
-void FrontBackSplit(Node * source, Node** front, Node ** back){
-  Node * fast;
-  Node * slow;
+void FrontBackSplit(Node<Airport> * source, Node<Airport>** front, Node<Airport> ** back){
+  Node<Airport> * fast;
+  Node<Airport> * slow;
   slow = source;
   fast = source->next;
   while(fast!=NULL){
@@ -133,16 +154,16 @@ void FrontBackSplit(Node * source, Node** front, Node ** back){
   *back = slow->next;
   slow->next = NULL;
 }
-Node * sortedMerge(Node * a, Node *b){
-  Node * result = NULL;
+  Node<Airport> * sortedMerge(Node<Airport> * a, Node<Airport> *b){
+  Node<Airport> * result = NULL;
   if(a==NULL) return(b);
   else if(b==NULL) return(a);
-double longitudeA = (a->air)->longitude;
-double latitudeA = (a->air)->latitude;
-double longitudeB = (b->air)->longitude;
-double latitudeB = (b->air)->latitude;
-double distanceA = distanceEarth(30.1944, 97.6700, latitudeA, longitudeA)/1.61;
-double distanceB = distanceEarth(30.1944, 97.6700, latitudeB, longitudeB)/1.61;
+  double longitudeA = (a)->data->longitude;
+  double latitudeA = (a)->data->latitude;
+  double longitudeB = (b)->data->longitude;
+  double latitudeB = (b)->data->latitude;
+  double distanceA = distanceEarth(30.1944, 97.6700, latitudeA, longitudeA)/1.61;
+  double distanceB = distanceEarth(30.1944, 97.6700, latitudeB, longitudeB)/1.61;
   if(distanceA<=distanceB){
     result = a;
     result->next = sortedMerge(a->next, b);
@@ -152,10 +173,10 @@ double distanceB = distanceEarth(30.1944, 97.6700, latitudeB, longitudeB)/1.61;
   }
   return result;
 }
-void mergeSort(Node ** headRef){
-  Node * head = *headRef;
-  Node * a;
-  Node * b;
+void mergeSort(Node<Airport> ** headRef){
+  Node<Airport> * head = *headRef;
+  Node<Airport> * a;
+  Node<Airport> * b;
   if(head==NULL||head->next==NULL){
     return;
   }

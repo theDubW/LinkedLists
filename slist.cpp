@@ -8,11 +8,7 @@ Class Library File
 
 */
 
-string Node::toString(){
-  string output = "";
-  output = string("Code: ")+string((this->air)->code)+string(", Longitude: ")+to_string((this->air)->longitude)+string(", Latitude: ")+to_string((this->air)->latitude);
-  return output;
-}
+
 // Constructor
 LinkedList::LinkedList(){
     this->length = 0;
@@ -30,16 +26,13 @@ LinkedList::~LinkedList(){
     cout << "LIST DELETED: " << this->length << endl;
 }
 // add(value)				//Adds a new value to the end of this list.
-void LinkedList::add(Airport * airport){
+void LinkedList::add(Node * node){
   Node * head = this->head;
-  Node * addedElement = new Node;
-  addedElement->air = airport;
-  addedElement->next = NULL;
   if(this->length == 0){
-    this->head = addedElement;
+    this->head = node;
   }
   else{
-    get((this->length)-1)->next = addedElement;
+    get((this->length)-1)->next = node;
   }
   this->length++;
 }
@@ -55,7 +48,7 @@ void LinkedList::clear(){
     std::cout << "LIST DELETED: " << this->length << std::endl;
 }
 // equals(list)				//Returns true if the two lists contain the same elements in the same order.
-bool LinkedList::equals(LinkedList * linked){
+bool Node::equals(LinkedList * linked){
   Node * current = this->head;
   Node * compared = linked->head;
   if(this->length!=linked->length){
@@ -64,14 +57,13 @@ bool LinkedList::equals(LinkedList * linked){
   for(int i = 0; i<this->length;i++){
     Node * list1 = this->get(i);
     Node * list2 = linked->get(i);
-    Airport * air1 = list1->air;
-    Airport * air2 = list2->air;
-    if(air1->code!=air2->code){
+    if(list1->code!=list2->code){
       return false;
     }
   }
   return true;
 }
+//in main.cpp
 //get(index)				//Returns the element at the specified index in this list.
 Node* LinkedList::get(int index){
   Node * head = this->head;
@@ -102,13 +94,7 @@ void LinkedList::insert(int index, Node * node){
   this->length++;
 }
 //exchg(index1, index2)		//Switches the payload data of specified indexex.
-void LinkedList::exchg(int index1, int index2){
-  Node * first = this->get(index1);
-  Node * second = this->get(index2);
-  Airport * swapper = first->air;
-  first->air = second->air;
-  second->air = swapper;
-}
+//in main
 //swap(index1,index2)		//Swaps node located at index1 with node at index2
 void LinkedList::swap(int index1, int index2){
   int smallerIndex = index1<index2?index1:index2;
@@ -167,9 +153,9 @@ void LinkedList::remove(int index){
   }
 }
 // set(index, value)		//Replaces the element at the specified index in this list with a new value.
-void LinkedList::set(int index,  Airport * air){
+void LinkedList::set(int index,  Node * node){
   Node * changeValue = this->get(index);
-  changeValue->air = air;
+  changeValue = node;
 }
 // size()					//Returns the number of elements in this list.
 int LinkedList::size(){
@@ -181,11 +167,18 @@ int LinkedList::size(){
   }
   return i;
 }
+LinkedList::void exchg(int index1, int index2){
+  Node * first = this->get(index1);
+  Node * second = this->get(index2);
+  Airport * swapper = &(first->air);
+  first = secondr;
+  second = swapper;
+}
 // subList(start, length)	//Returns a new list containing elements from a sub-range of this list.
 LinkedList * LinkedList::subList(int start, int length){
   LinkedList * list = new LinkedList();
   for(int i = start; i<=length; i++){
-    list->add((this->get(i))->air);
+    list->add(this->get(i));
   }
   return list;
 }

@@ -17,6 +17,8 @@
  */
 #define pi 3.14159265358979323846
 #define earthRadiusKm 6371.0
+#define austinLatitude 30.1944999694824
+#define austinLongitude -97.6698989868164
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -29,16 +31,27 @@ using namespace std;
 class Airport
 {
 public:
-    char    code[5];
-    double   longitude;
-    double   latitude;
+    string ident;
+    string type;
+    string name;
+    double longitude;
+    double latitude;
+    string elevation_ft;
+    string continent;
+    string iso_country;
+    string iso_region;
+    string municipality;
+    string gps_code;
+    string iata_code;
+    string local_code;
+
     string toString(){
       string output = "";
-      output = string("Code: ")+string((this)->code)+string(", Longitude: ")+to_string((this)->longitude)+string(", Latitude: ")+to_string((this)->latitude);
+      output = string("Ident: ")+string((this)->ident)+string(", Type: ")+type+", "+name+", "+"Longitude: "+to_string((this)->longitude)+string(", Latitude: ")+to_string((this)->latitude)+", "+elevation_ft+", "+continent+", "+iso_country+", "+iso_region+", "+municipality+", "+gps_code+", "+iata_code+", "+local_code;
       return output;
     }
     bool equals(Airport * air){
-      if(air->code!=this->code)
+      if(air->ident!=this->ident)
         return false;
       if(air->longitude!=this->longitude)
         return false;
@@ -55,39 +68,68 @@ LinkedList<Airport> * link = new LinkedList<Airport>();
 int main()
 {
     ifstream infile;
-    int i=0;
-    char cNum[10] ;
+    char cNum[2000];
+    char filler[2000];
     // Replace array with Linked List
-    int   airportCount;
+    int airportCount;
   //  Airport* airportArr[13500];
 
-    infile.open ("./USAirportCodes.csv", ifstream::in);
+    infile.open ("./airport-codes_US.csv", ifstream::in);
     if (infile.is_open())
     {
-        int   c=0;
+        int   interval=0;
+        infile.getline(filler, 256, ',');
         while (infile.good())
         {
+
             Airport * c = new Airport();
-            infile.getline(c->code, 256, ',');
-            infile.getline(cNum, 256, ',');
-            c->latitude = atof(cNum);
-            infile.getline(cNum, 256, '\n');
-            c->longitude = atof(cNum);
-            link->add(c);
-            i++ ;
-            c++;
+            infile.getline(filler, 256, ',');
+            c->ident=filler;
+            if(c->ident=="")
+              break;
+            infile.getline(filler, 256, ',');
+            c->type=filler;
+            if(c->type!="small_airport"&&c->type!="medium_airport"&&c->type!="large_airport"){
+              infile.getline(filler, 256, '\n');
+            }else{
+              infile.getline(filler, 256, ',');
+              c->name=filler;
+             infile.getline(cNum, 256, ',');
+             c->longitude = atof(cNum);
+              infile.getline(cNum, 256, ',');
+              c->latitude=atof(cNum);
+              infile.getline(filler, 256, ',');
+              c->elevation_ft=filler;
+              infile.getline(filler, 256, ',');
+              c->continent=filler;
+              infile.getline(filler, 256, ',');
+              c->iso_country=filler;
+              infile.getline(filler, 256, ',');
+              c->iso_region=filler;
+              infile.getline(filler, 256, ',');
+              c->municipality=filler;
+              infile.getline(filler, 256, ',');
+              c->gps_code=filler;
+              infile.getline(filler, 256, ',');
+              c->iata_code=filler;
+              infile.getline(filler, 256, '\n');
+              c->local_code=filler;
+              link->add(c);
+              interval++;
+
+            }
         }
-        airportCount = c-1;
+        airportCount = interval-1;
         infile.close();
       mergeSort(&(link->head));
-      int j = 13428;
-      cout<<"Farthest Airport: "<<(link->get(j))->toString()<<", Distance: "<< 0.621371*distanceEarth(30.1944, 97.67, (link->get(j))->longitude, (link->get(j))->latitude)<<endl;
+      cout<<"Farthest Airport: "<<(link->get(link->size()-1))->toString()<<", Distance: "<< 0.621371*distanceEarth(austinLatitude, austinLongitude, (link->get(link->size()-1))->latitude, (link->get(link->size()-1))->longitude)<<endl;
+      cout<<"Closest Airport: "<<(link->get(0))->toString()<<", Distance: "<< 0.621371*distanceEarth(austinLatitude, austinLongitude, (link->get(0)->latitude), link->get(0)->longitude) <<endl;
       printf("% 10s\n", "Airports Within 100 Miles: ");
-      for(i = 0; i<link->size();i++){
-          //cout<<"WTF";
+      cout<<"SIZE: "<<link->size();
+      for(int i = 0; i<link->size();i++){
           double longitudeA = (link->get(i))->longitude;
           double latitudeA = (link->get(i))->latitude;
-          double distanceInMiles = distanceEarth(30.1944, 97.6700, latitudeA, longitudeA)/1.61;
+          double distanceInMiles = distanceEarth(austinLatitude, austinLongitude, latitudeA, longitudeA)/1.61;
           if(distanceInMiles<=100.0)
             cout<<i+1<<". "<<(link->get(i))->toString()<<", Distance in Miles: "<<distanceInMiles<<endl;
           else
@@ -162,8 +204,8 @@ void FrontBackSplit(Node<Airport> * source, Node<Airport>** front, Node<Airport>
   double latitudeA = (a)->data->latitude;
   double longitudeB = (b)->data->longitude;
   double latitudeB = (b)->data->latitude;
-  double distanceA = distanceEarth(30.1944, 97.6700, latitudeA, longitudeA)/1.61;
-  double distanceB = distanceEarth(30.1944, 97.6700, latitudeB, longitudeB)/1.61;
+  double distanceA = distanceEarth(austinLatitude, austinLongitude, latitudeA, longitudeA)/1.61;
+  double distanceB = distanceEarth(austinLatitude, austinLongitude, latitudeB, longitudeB)/1.61;
   if(distanceA<=distanceB){
     result = a;
     result->next = sortedMerge(a->next, b);
